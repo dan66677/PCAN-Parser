@@ -21,5 +21,6 @@ namespace WpfApp2.Models
         public string AsciiData => BitConverter.ToString(Data).Replace("-", " ");
         public string Direction => IsReceived ? "Rx" : "Tx";
         public string TimeOffsetFormatted => TimeOffsetMs.ToString("0.###", CultureInfo.InvariantCulture);
+
     }
 }
