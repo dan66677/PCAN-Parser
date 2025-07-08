@@ -10,7 +10,7 @@ namespace WpfApp2.Views
         }
         private void Button_New(object sender, RoutedEventArgs e)
         {
-            Config taskWindow = new Config();
+            ConfigWindow taskWindow = new ConfigWindow();
             taskWindow.Show();
         }
     }
