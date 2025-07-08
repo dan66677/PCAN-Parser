@@ -15,7 +15,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 namespace WpfApp2
-{mm
+{
     /// <summary>
     /// Логика взаимодействия для Config.xaml
     /// </summary>
