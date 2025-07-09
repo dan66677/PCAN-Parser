@@ -23,8 +23,8 @@
             <TextBox x:Name="FilterTextBox" Text="{Binding FilterText, UpdateSourceTrigger=PropertyChanged}" 
                     Width="200" Margin="5" VerticalAlignment="Center"/>
             <Button Content="Сбросить фильтр" Command="{Binding ClearFilterCommand}" Margin="5" Padding="10,5"/>
-            <Button Content="Конфиг" Click="Button_New" Margin="5" Padding="10,5"/>
-            <Button Content="Ecxel" Click="Button_New" Margin="5" Padding="10,5"/>
+            <Button Content="Конфиг" Click="Button_Config" Margin="5" Padding="10,5"/>
+            <Button Content="Ecxel" Click="Button_Excel" Margin="5" Padding="10,5"/>
         </StackPanel>
 
         <!-- Таблица сообщений -->
