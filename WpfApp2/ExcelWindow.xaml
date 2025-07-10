@@ -8,9 +8,17 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Button x:Name="closeButton" Content="Закрыть" Click="closeButton_Click" Margin="5" HorizontalAlignment="Right"/>
-
-        <DataGrid x:Name="configDataGrid" Grid.Row="1" AutoGenerateColumns="False" Margin="10">
+        <Button x:Name="ExelButton" Content="Перевести" Click="ExelButton_Click" Margin="274,281,274,88" Grid.Row="1" RenderTransformOrigin="0.5,0.5" >
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <DataGrid x:Name="configDataGrid" Grid.Row="1" AutoGenerateColumns="False" Margin="10,10,10,202">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="120"/>
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80"/>
