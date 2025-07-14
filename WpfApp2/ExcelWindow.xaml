@@ -25,14 +25,14 @@
                 <DataGridTextColumn Header="Множитель" Binding="{Binding Multiplier}" Width="80"/>
                 <DataGridTextColumn Header="Делитель" Binding="{Binding Divider}" Width="80"/>
                 <DataGridTextColumn Header="Отступ" Binding="{Binding Indent}" Width="80"/>
-                <DataGridTextColumn Header="Byte 0" Binding="{Binding Byte0}" Width="60"/>
-                <DataGridTextColumn Header="Byte 1" Binding="{Binding Byte1}" Width="60"/>
-                <DataGridTextColumn Header="Byte 2" Binding="{Binding Byte2}" Width="60"/>
-                <DataGridTextColumn Header="Byte 3" Binding="{Binding Byte3}" Width="60"/>
-                <DataGridTextColumn Header="Byte 4" Binding="{Binding Byte4}" Width="60"/>
-                <DataGridTextColumn Header="Byte 5" Binding="{Binding Byte5}" Width="60"/>
-                <DataGridTextColumn Header="Byte 6" Binding="{Binding Byte6}" Width="60"/>
-                <DataGridTextColumn Header="Byte 7" Binding="{Binding Byte7}" Width="60"/>
+                <DataGridTextColumn Header="Byte 1" Binding="{Binding Byte0}" Width="60"/>
+                <DataGridTextColumn Header="Byte 2" Binding="{Binding Byte1}" Width="60"/>
+                <DataGridTextColumn Header="Byte 3" Binding="{Binding Byte2}" Width="60"/>
+                <DataGridTextColumn Header="Byte 4" Binding="{Binding Byte3}" Width="60"/>
+                <DataGridTextColumn Header="Byte 5" Binding="{Binding Byte4}" Width="60"/>
+                <DataGridTextColumn Header="Byte 6" Binding="{Binding Byte5}" Width="60"/>
+                <DataGridTextColumn Header="Byte 7" Binding="{Binding Byte6}" Width="60"/>
+                <DataGridTextColumn Header="Byte 8" Binding="{Binding Byte7}" Width="60"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>
