@@ -1,0 +1,166 @@
+﻿<Window x:Class="WpfApp2.ConfigWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp2"
+        mc:Ignorable="d"
+        Title="PCAN-View TRC Parser" Height="550" Width="950">
+    <Grid>
+        <!-- Список параметров -->
+        <ListBox x:Name="ParameterList" SelectionChanged="ParameterList_SelectionChanged"
+         Margin="10,10,120,343"/>
+
+        <Button x:Name="AddParamButton" Content="Добавить параметр" Click="AddParamButton_Click"
+        Height="25" Width="120" Margin="556,0,274,70" VerticalAlignment="Bottom"/>
+
+        <Button x:Name="DeleteParamButton" Content="Удалить параметр" Click="DeleteParamButton_Click"
+        Height="25" Width="120" Margin="556,0,274,40" VerticalAlignment="Bottom"/>
+        <!-- Поля ввода параметров -->
+        <AccessText Text="Имя параметра" Width="200" Margin="68,224,682,191"/>
+        <AccessText Text="Id параметра" Width="200" Margin="68,254,682,161"/>
+        <AccessText Text="Отступ" Width="200" Margin="68,285,682,131"/>
+        <AccessText Text="Множитель" Width="200" Margin="68,314,682,106"/>
+        <AccessText Text="Делитель" Width="200" Margin="68,344,682,71"/>
+
+        <TextBox x:Name="NameEntry" Width="200" Margin="68,239,682,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="IdEntry" Width="200" Margin="68,269,682,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Multiplier" Width="200" Margin="68,328,682,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Divider" Width="200" Margin="68,359,682,0" VerticalAlignment="Top"/>
+        <TextBox x:Name="Indent" Width="200" Margin="68,299,682,0" VerticalAlignment="Top" />
+
+        <Button x:Name="SaveButton" Content="Сохранить все" Click="saveButton_Click"
+                Height="25" Margin="703,439,57,0" VerticalAlignment="Top"/>
+        <Button x:Name="LoadButton" Content="Загрузить" Click="loadButton_Click"
+                Height="25" Margin="703,469,57,0" VerticalAlignment="Top"/>
+
+        <!-- Нумерация битов сверху (7-0) -->
+        <StackPanel Orientation="Horizontal" Margin="472,196,-29,0" VerticalAlignment="Top" Height="20">
+            <TextBlock Text="1" Width="20" Margin="2,0,2,0" HorizontalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Text="2" Width="20" Margin="2,0,2,0" HorizontalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Text="3" Width="20" Margin="2,0,2,0" HorizontalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Text="4" Width="20" Margin="2,0,2,0" HorizontalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Text="5" Width="20" Margin="2,0,2,0" HorizontalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Text="6" Width="20" Margin="2,0,2,0" HorizontalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Text="7" Width="20" Margin="2,0,2,0" HorizontalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Text="8" Width="20" Margin="2,0,2,0" HorizontalAlignment="Center" FontWeight="Bold"/>
+        </StackPanel>
+
+        <!-- Нумерация байтов слева (1-8) -->
+        <StackPanel Orientation="Vertical" Margin="366,223,474,0" VerticalAlignment="Top">
+            <TextBlock Text="1 байт" Height="20" Margin="0,2,0,2" VerticalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Text="2 байт" Height="20" Margin="0,2,0,2" VerticalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Text="3 байт" Height="20" Margin="0,2,0,2" VerticalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Text="4 байт" Height="20" Margin="0,2,0,2" VerticalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Text="5 байт" Height="20" Margin="0,2,0,2" VerticalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Text="6 байт" Height="20" Margin="0,2,0,2" VerticalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Text="7 байт" Height="20" Margin="0,2,0,2" VerticalAlignment="Center" FontWeight="Bold"/>
+            <TextBlock Text="8 байт" Height="22" Margin="0,2,0,2" FontWeight="Bold"/>
+        </StackPanel>
+
+        <!-- Чекбоксы для байтов (8x8) с HEX-представлением -->
+        <!-- Байт 1 -->
+        <StackPanel Orientation="Horizontal" Margin="426,224,13,0" VerticalAlignment="Top" Height="20">
+            <TextBox x:Name="Byte1Value" Width="40" Text="00" TextChanged="ByteValue_TextChanged" Tag="Byte1"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte1Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte1Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte1Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte1Bit4" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte1Bit3" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte1Bit2" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte1Bit1" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte1Bit0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+        </StackPanel>
+
+        <!-- Байт 2 -->
+        <StackPanel Orientation="Horizontal" Margin="426,249,13,0" VerticalAlignment="Top" Height="20">
+            <TextBox x:Name="Byte2Value" Width="40" Text="00" TextChanged="ByteValue_TextChanged" Tag="Byte2"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte2Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte2Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte2Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte2Bit4" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte2Bit3" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte2Bit2" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte2Bit1" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte2Bit0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+        </StackPanel>
+
+        <!-- Байт 3 -->
+        <StackPanel Orientation="Horizontal" Margin="426,274,13,0" VerticalAlignment="Top" Height="20">
+            <TextBox x:Name="Byte3Value" Width="40" Text="00" TextChanged="ByteValue_TextChanged" Tag="Byte3"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte3Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte3Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte3Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte3Bit4" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte3Bit3" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte3Bit2" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte3Bit1" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte3Bit0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+        </StackPanel>
+
+        <!-- Байт 4 -->
+        <StackPanel Orientation="Horizontal" Margin="426,299,13,0" VerticalAlignment="Top" Height="20">
+            <TextBox x:Name="Byte4Value" Width="40" Text="00" TextChanged="ByteValue_TextChanged" Tag="Byte4"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte4Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte4Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte4Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte4Bit4" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte4Bit3" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte4Bit2" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte4Bit1" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte4Bit0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+        </StackPanel>
+
+        <!-- Байт 5 -->
+        <StackPanel Orientation="Horizontal" Margin="426,324,13,0" VerticalAlignment="Top" Height="20">
+            <TextBox x:Name="Byte5Value" Width="40" Text="00" TextChanged="ByteValue_TextChanged" Tag="Byte5"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte5Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte5Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte5Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte5Bit4" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte5Bit3" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte5Bit2" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte5Bit1" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte5Bit0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+        </StackPanel>
+
+        <!-- Байт 6 -->
+        <StackPanel Orientation="Horizontal" Margin="426,349,13,0" VerticalAlignment="Top" Height="20">
+            <TextBox x:Name="Byte6Value" Width="40" Text="00" TextChanged="ByteValue_TextChanged" Tag="Byte6"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte6Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte6Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte6Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte6Bit4" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte6Bit3" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte6Bit2" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte6Bit1" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte6Bit0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+        </StackPanel>
+
+        <!-- Байт 7 -->
+        <StackPanel Orientation="Horizontal" Margin="426,374,13,0" VerticalAlignment="Top" Height="20">
+            <TextBox x:Name="Byte7Value" Width="40" Text="00" TextChanged="ByteValue_TextChanged" Tag="Byte7"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte7Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte7Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte7Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte7Bit4" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte7Bit3" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte7Bit2" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte7Bit1" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte7Bit0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+        </StackPanel>
+
+        <!-- Байт 8 -->
+        <StackPanel Orientation="Horizontal" Margin="426,399,13,0" VerticalAlignment="Top" Height="20">
+            <TextBox x:Name="Byte8Value" Width="40" Text="00" TextChanged="ByteValue_TextChanged" Tag="Byte8"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte8Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte8Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte8Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte8Bit4" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte8Bit3" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte8Bit2" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte8Bit1" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox Width="20" Margin="2,0,2,0" Tag="Byte8Bit0" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+        </StackPanel>
+    </Grid>
+</Window>
