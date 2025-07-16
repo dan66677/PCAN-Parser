@@ -16,8 +16,9 @@ namespace WpfApp2.Views
         }
         private void Button_Excel(object sender, RoutedEventArgs e)
         {
-            ExcelWindow taskWindow = new ExcelWindow();
-            taskWindow.Show();
+            ExcelWindow excelWindow = new ExcelWindow();
+            excelWindow.Owner = this; // Устанавливаем главное окно как владельца
+            excelWindow.Show();
         }
     }
 }
