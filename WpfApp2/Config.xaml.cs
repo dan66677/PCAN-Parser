@@ -223,6 +223,47 @@ namespace WpfApp2
                 UpdateParameterList();
             }
         }
+        private void DeleteItemButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (sender is Button button && button.Tag != null)
+            {
+                string parameterInfo = button.Tag.ToString();
+                int index = parameters.FindIndex(p => $"{p.Name} ({p.Id})" == parameterInfo);
+
+                if (index >= 0)
+                {
+                    // Подтверждение удаления
+                    var confirmResult = MessageBox.Show(
+                        $"Удалить параметр '{parameters[index].Name}'?",
+                        "Подтверждение удаления",
+                        MessageBoxButton.YesNo);
+
+                    if (confirmResult == MessageBoxResult.Yes)
+                    {
+                        parameters.RemoveAt(index);
+
+                        // Обновляем интерфейс
+                        UpdateParameterList();
+
+                        // Если удалили текущий параметр, загружаем предыдущий или следующий
+                        if (currentParameterIndex >= parameters.Count)
+                        {
+                            currentParameterIndex = parameters.Count - 1;
+                        }
+
+                        if (parameters.Count > 0)
+                        {
+                            LoadCurrentParameter();
+                        }
+                        else
+                        {
+                            // Если параметров не осталось, добавляем новый
+                            AddNewParameter();
+                        }
+                    }
+                }
+            }
+        }
 
         private void saveButton_Click(object sender, RoutedEventArgs e)
         {

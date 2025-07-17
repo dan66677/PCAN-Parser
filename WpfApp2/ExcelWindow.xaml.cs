@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using ClosedXML.Excel;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -16,12 +17,16 @@ namespace WpfApp2
     {
         private List<CanMessage> _canMessages = new List<CanMessage>();
         private List<ConfigItem> _configItems = new List<ConfigItem>();
+        private string _excelFilePath = @"C:\data\CAN_Data.xlsx";
 
         public ExcelWindow()
         {
             InitializeComponent();
             LoadConfigData();
             LoadCanMessages();
+
+            // Проверяем и создаем папку, если её нет
+            Directory.CreateDirectory(Path.GetDirectoryName(_excelFilePath));
         }
 
         private void LoadConfigData()
@@ -99,29 +104,77 @@ namespace WpfApp2
             var selectedConfig = ConfigComboBox.SelectedItem as ConfigItem;
             if (selectedConfig == null) return;
 
-            var saveFileDialog = new SaveFileDialog
+            try
             {
-                Filter = "Text files (*.txt)|*.txt|All files (*.*)|*.*",
-                FileName = $"{selectedConfig.Name}_export.txt"
-            };
-
-            if (saveFileDialog.ShowDialog() == true)
+                ExportToExcel(selectedConfig);
+                MessageBox.Show($"Данные '{selectedConfig.Name}' добавлены в Excel файл", "Экспорт завершен");
+            }
+            catch (Exception ex)
             {
-                try
-                {
-                    ExportData(selectedConfig, saveFileDialog.FileName);
-                    MessageBox.Show($"Данные успешно экспортированы в {saveFileDialog.FileName}", "Экспорт завершен");
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Ошибка экспорта: {ex.Message}", "Ошибка");
-                }
+                MessageBox.Show($"Ошибка экспорта: {ex.Message}", "Ошибка");
             }
         }
 
-        private void ExportData(ConfigItem config, string filePath)
+        private void ExportToExcel(ConfigItem config)
         {
-            // Получаем маску байтов из конфига
+            // Получаем отфильтрованные сообщения
+            var filteredMessages = GetFilteredMessages(config);
+
+            if (filteredMessages.Count == 0)
+            {
+                throw new Exception($"Нет сообщений с ID {config.Id} (конфигурация: {config.Name})");
+            }
+
+            // Работа с Excel файлом
+            using (var workbook = File.Exists(_excelFilePath)
+                ? new XLWorkbook(_excelFilePath)
+                : new XLWorkbook())
+            {
+                // Получаем или создаем лист
+                var worksheet = workbook.Worksheets.Count > 0
+                    ? workbook.Worksheet(1)
+                    : workbook.Worksheets.Add("CAN Data");
+
+                // Определяем последнюю использованную колонку
+                int lastCol = worksheet.LastColumnUsed()?.ColumnNumber() ?? 0;
+                int newCol = lastCol == 0 ? 1 : lastCol + 2; // Каждый параметр занимает 2 колонки
+
+                // Записываем заголовки
+                worksheet.Cell(1, newCol).Value = $"Time ({config.Name})";
+                worksheet.Cell(1, newCol + 1).Value = $"Value ({config.Name})";
+
+                // Записываем данные
+                for (int i = 0; i < filteredMessages.Count; i++)
+                {
+                    var message = filteredMessages[i];
+                    double value = CalculateValue(message, config);
+
+                    worksheet.Cell(i + 2, newCol).Value = message.TimeOffsetMs;
+                    worksheet.Cell(i + 2, newCol + 1).Value = value;
+                }
+
+                // Форматирование
+                worksheet.Columns().AdjustToContents();
+                worksheet.Column(newCol + 1).Style.NumberFormat.Format = "0.000";
+
+                // Сохраняем файл
+                workbook.SaveAs(_excelFilePath);
+            }
+
+            StatusTextBlock.Text = $"Добавлен параметр '{config.Name}' ({filteredMessages.Count} значений)";
+        }
+
+        private List<CanMessage> GetFilteredMessages(ConfigItem config)
+        {
+            uint configId = Convert.ToUInt32(config.Id, 16);
+            return _canMessages
+                .Where(m => m.Id == configId)
+                .OrderBy(m => m.TimeOffsetMs)
+                .ToList();
+        }
+
+        private double CalculateValue(CanMessage message, ConfigItem config)
+        {
             byte[] byteMasks = new byte[8];
             byteMasks[0] = Convert.ToByte(config.Byte0, 16);
             byteMasks[1] = Convert.ToByte(config.Byte1, 16);
@@ -132,64 +185,33 @@ namespace WpfApp2
             byteMasks[6] = Convert.ToByte(config.Byte6, 16);
             byteMasks[7] = Convert.ToByte(config.Byte7, 16);
 
-            // Парсим числовые параметры
-            uint configId = Convert.ToUInt32(config.Id, 16);
+            double value = 0;
+            int bitPosition = 0;
+
+            for (int byteIndex = 0; byteIndex < message.Data.Length && byteIndex < 8; byteIndex++)
+            {
+                byte messageByte = message.Data[byteIndex];
+                byte maskByte = byteMasks[byteIndex];
+
+                for (int bitIndex = 0; bitIndex < 8; bitIndex++)
+                {
+                    if ((maskByte & (1 << bitIndex)) != 0)
+                    {
+                        bool bitValue = (messageByte & (1 << bitIndex)) != 0;
+                        if (bitValue)
+                        {
+                            value += Math.Pow(2, bitPosition);
+                        }
+                        bitPosition++;
+                    }
+                }
+            }
+
             double multiplier = string.IsNullOrEmpty(config.Multiplier) ? 1 : double.Parse(config.Multiplier);
             double divider = string.IsNullOrEmpty(config.Divider) ? 1 : double.Parse(config.Divider);
             double indent = string.IsNullOrEmpty(config.Indent) ? 0 : double.Parse(config.Indent);
 
-            // Фильтруем сообщения по ID
-            var filteredMessages = _canMessages
-                .Where(m => m.Id == configId)
-                .OrderBy(m => m.TimeOffsetMs)
-                .ToList();
-
-            if (filteredMessages.Count == 0)
-            {
-                throw new Exception("Нет сообщений с выбранным ID");
-            }
-
-            using (var writer = new StreamWriter(filePath, false, Encoding.UTF8))
-            {
-                // Записываем заголовок
-                writer.WriteLine($"Time;{config.Name};");
-
-                // Обрабатываем каждое сообщение
-                foreach (var message in filteredMessages)
-                {
-                    double value = 0;
-                    int bitPosition = 0;
-
-                    // Обрабатываем каждый байт в сообщении
-                    for (int byteIndex = 0; byteIndex < message.Data.Length && byteIndex < 8; byteIndex++)
-                    {
-                        byte messageByte = message.Data[byteIndex];
-                        byte maskByte = byteMasks[byteIndex];
-
-                        // Обрабатываем каждый бит в байте
-                        for (int bitIndex = 0; bitIndex < 8; bitIndex++)
-                        {
-                            if ((maskByte & (1 << bitIndex)) != 0)
-                            {
-                                bool bitValue = (messageByte & (1 << bitIndex)) != 0;
-                                if (bitValue)
-                                {
-                                    value += Math.Pow(2, bitPosition);
-                                }
-                                bitPosition++;
-                            }
-                        }
-                    }
-
-                    // Применяем преобразования
-                    value = (value * multiplier / divider) + indent;
-
-                    // Записываем данные - каждое значение с новой строки
-                    writer.WriteLine($"{message.TimeOffsetMs.ToString("0.###", CultureInfo.InvariantCulture)};{value.ToString("0.###", CultureInfo.InvariantCulture)};");
-                }
-            }
-
-            StatusTextBlock.Text = $"Экспортировано {filteredMessages.Count} сообщений";
+            return (value * multiplier / divider) + indent;
         }
     }
 
