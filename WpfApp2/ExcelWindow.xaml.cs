@@ -67,6 +67,7 @@ namespace WpfApp2
             this.Close();
         }
     }
+    д
 
     public class ConfigItem
     {
