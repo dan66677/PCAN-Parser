@@ -8,23 +8,31 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Button x:Name="closeButton" Content="Закрыть" Click="closeButton_Click" Margin="5" HorizontalAlignment="Right"/>
-
-        <DataGrid x:Name="configDataGrid" Grid.Row="1" AutoGenerateColumns="False" Margin="10">
+        <Button x:Name="ExelButton" Content="Перевести" Click="ExelButton_Click" Margin="274,281,274,88" Grid.Row="1" RenderTransformOrigin="0.5,0.5" >
+            <Button.RenderTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleY="1"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Button.RenderTransform>
+        </Button>
+        <DataGrid x:Name="configDataGrid" Grid.Row="1" AutoGenerateColumns="False" Margin="10,10,10,202">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Название" Binding="{Binding Name}" Width="120"/>
                 <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="80"/>
                 <DataGridTextColumn Header="Множитель" Binding="{Binding Multiplier}" Width="80"/>
                 <DataGridTextColumn Header="Делитель" Binding="{Binding Divider}" Width="80"/>
                 <DataGridTextColumn Header="Отступ" Binding="{Binding Indent}" Width="80"/>
-                <DataGridTextColumn Header="Byte 0" Binding="{Binding Byte0}" Width="60"/>
-                <DataGridTextColumn Header="Byte 1" Binding="{Binding Byte1}" Width="60"/>
-                <DataGridTextColumn Header="Byte 2" Binding="{Binding Byte2}" Width="60"/>
-                <DataGridTextColumn Header="Byte 3" Binding="{Binding Byte3}" Width="60"/>
-                <DataGridTextColumn Header="Byte 4" Binding="{Binding Byte4}" Width="60"/>
-                <DataGridTextColumn Header="Byte 5" Binding="{Binding Byte5}" Width="60"/>
-                <DataGridTextColumn Header="Byte 6" Binding="{Binding Byte6}" Width="60"/>
-                <DataGridTextColumn Header="Byte 7" Binding="{Binding Byte7}" Width="60"/>
+                <DataGridTextColumn Header="Byte 1" Binding="{Binding Byte0}" Width="60"/>
+                <DataGridTextColumn Header="Byte 2" Binding="{Binding Byte1}" Width="60"/>
+                <DataGridTextColumn Header="Byte 3" Binding="{Binding Byte2}" Width="60"/>
+                <DataGridTextColumn Header="Byte 4" Binding="{Binding Byte3}" Width="60"/>
+                <DataGridTextColumn Header="Byte 5" Binding="{Binding Byte4}" Width="60"/>
+                <DataGridTextColumn Header="Byte 6" Binding="{Binding Byte5}" Width="60"/>
+                <DataGridTextColumn Header="Byte 7" Binding="{Binding Byte6}" Width="60"/>
+                <DataGridTextColumn Header="Byte 8" Binding="{Binding Byte7}" Width="60"/>
             </DataGrid.Columns>
         </DataGrid>
     </Grid>

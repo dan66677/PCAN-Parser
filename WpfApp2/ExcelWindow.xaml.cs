@@ -1,8 +1,11 @@
-﻿using System.IO;
+﻿using Microsoft.Win32;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Collections.Generic;
-using System.Text;
+using WpfApp2.Models;
+using WpfApp2.Services;
 
 namespace WpfApp2
 {
@@ -62,10 +65,62 @@ namespace WpfApp2
             }
         }
 
-        private void closeButton_Click(object sender, RoutedEventArgs e)
+
+        private void LoadData()
         {
-            this.Close();
+            try
+            {
+                string filePath = @"C:\data\config.txt";
+
+                if (!File.Exists(filePath))
+                {
+                    MessageBox.Show("Файл конфигурации не найден!");
+                    return;
+                }
+
+                var lines = File.ReadAllLines(filePath, Encoding.UTF8);
+                var data = new List<ConfigItem>();
+
+                foreach (var line in lines)
+                {
+                    var parts = line.Split(';');
+                    if (parts.Length >= 13)
+                    {
+                        var item = new ConfigItem
+                        {
+                            Name = parts[0],
+                            Id = parts[1],
+                            Multiplier = parts[2],
+                            Divider = parts[3],
+                            Indent = parts[4],
+                            Byte0 = parts[5],
+                            Byte1 = parts[6],
+                            Byte2 = parts[7],
+                            Byte3 = parts[8],
+                            Byte4 = parts[9],
+                            Byte5 = parts[10],
+                            Byte6 = parts[11],
+                            Byte7 = parts[12]
+                        };
+                        data.Add(item);
+                    }
+                }
+
+                configDataGrid.ItemsSource = data;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки данных: {ex.Message}");
+            }
         }
+
+        private void ExelButton_Click(object sender, EventArgs e)
+        {
+
+        }
+
+
+
     }
     д
 
