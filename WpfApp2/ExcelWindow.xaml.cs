@@ -122,7 +122,7 @@ namespace WpfApp2
 
 
     }
-    д
+    
 
     public class ConfigItem
     {
