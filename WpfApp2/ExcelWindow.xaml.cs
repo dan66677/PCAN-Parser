@@ -2,7 +2,6 @@
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -17,16 +16,14 @@ namespace WpfApp2
     {
         private List<CanMessage> _canMessages = new List<CanMessage>();
         private List<ConfigItem> _configItems = new List<ConfigItem>();
-        private string _excelFilePath = @"C:\data\CAN_Data.xlsx";
+        private string _currentExcelFilePath = string.Empty;
 
         public ExcelWindow()
         {
             InitializeComponent();
             LoadConfigData();
             LoadCanMessages();
-
-            // Проверяем и создаем папку, если её нет
-            Directory.CreateDirectory(Path.GetDirectoryName(_excelFilePath));
+            UpdateSelectedFileDisplay();
         }
 
         private void LoadConfigData()
@@ -93,8 +90,43 @@ namespace WpfApp2
             }
         }
 
+        private void SelectExcelFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                InitialDirectory = Environment.CurrentDirectory,
+                Filter = "Excel Files (*.xlsx)|*.xlsx",
+                Title = "Выберите файл Excel"
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                _currentExcelFilePath = openFileDialog.FileName;
+                UpdateSelectedFileDisplay();
+                StatusTextBlock.Text = $"Выбран файл: {Path.GetFileName(_currentExcelFilePath)}";
+            }
+        }
+
+        private void UpdateSelectedFileDisplay()
+        {
+            if (!string.IsNullOrEmpty(_currentExcelFilePath))
+            {
+                SelectedFileTextBlock.Text = $"Текущий файл: {_currentExcelFilePath}";
+            }
+            else
+            {
+                SelectedFileTextBlock.Text = "Файл не выбран";
+            }
+        }
+
         private void ExportButton_Click(object sender, RoutedEventArgs e)
         {
+            if (string.IsNullOrEmpty(_currentExcelFilePath))
+            {
+                MessageBox.Show("Сначала выберите или создайте файл Excel");
+                return;
+            }
+
             if (ConfigComboBox.SelectedItem == null)
             {
                 MessageBox.Show("Выберите конфигурацию для экспорта");
@@ -106,7 +138,7 @@ namespace WpfApp2
 
             try
             {
-                ExportToExcel(selectedConfig);
+                ExportToExcel(selectedConfig, _currentExcelFilePath);
                 MessageBox.Show($"Данные '{selectedConfig.Name}' добавлены в Excel файл", "Экспорт завершен");
             }
             catch (Exception ex)
@@ -115,7 +147,7 @@ namespace WpfApp2
             }
         }
 
-        private void ExportToExcel(ConfigItem config)
+        private void ExportToExcel(ConfigItem config, string filePath)
         {
             // Получаем отфильтрованные сообщения
             var filteredMessages = GetFilteredMessages(config);
@@ -126,18 +158,15 @@ namespace WpfApp2
             }
 
             // Работа с Excel файлом
-            using (var workbook = File.Exists(_excelFilePath)
-                ? new XLWorkbook(_excelFilePath)
-                : new XLWorkbook())
+            using (var workbook = File.Exists(filePath) ? new XLWorkbook(filePath) : new XLWorkbook())
             {
                 // Получаем или создаем лист
-                var worksheet = workbook.Worksheets.Count > 0
-                    ? workbook.Worksheet(1)
-                    : workbook.Worksheets.Add("CAN Data");
+                IXLWorksheet worksheet = workbook.Worksheets.Count > 0 ?
+                    workbook.Worksheet(1) :
+                    workbook.Worksheets.Add("CAN Data");
 
-                // Определяем последнюю использованную колонку
-                int lastCol = worksheet.LastColumnUsed()?.ColumnNumber() ?? 0;
-                int newCol = lastCol == 0 ? 1 : lastCol + 2; // Каждый параметр занимает 2 колонки
+                // Определяем последнюю использованную колонку + 1 (чтобы оставить пустой промежуток)
+                int newCol = (worksheet.LastColumnUsed()?.ColumnNumber() + 2) ?? 1;
 
                 // Записываем заголовки
                 worksheet.Cell(1, newCol).Value = $"Time ({config.Name})";
@@ -158,7 +187,7 @@ namespace WpfApp2
                 worksheet.Column(newCol + 1).Style.NumberFormat.Format = "0.000";
 
                 // Сохраняем файл
-                workbook.SaveAs(_excelFilePath);
+                workbook.SaveAs(filePath);
             }
 
             StatusTextBlock.Text = $"Добавлен параметр '{config.Name}' ({filteredMessages.Count} значений)";
@@ -213,22 +242,91 @@ namespace WpfApp2
 
             return (value * multiplier / divider) + indent;
         }
-    }
 
-    public class ConfigItem
-    {
-        public string Name { get; set; }
-        public string Id { get; set; }
-        public string Multiplier { get; set; }
-        public string Divider { get; set; }
-        public string Indent { get; set; }
-        public string Byte0 { get; set; }
-        public string Byte1 { get; set; }
-        public string Byte2 { get; set; }
-        public string Byte3 { get; set; }
-        public string Byte4 { get; set; }
-        public string Byte5 { get; set; }
-        public string Byte6 { get; set; }
-        public string Byte7 { get; set; }
+        private void CreateNewFileButton_Click(object sender, RoutedEventArgs e)
+        {
+            var saveFileDialog = new SaveFileDialog
+            {
+                Filter = "Excel Files (*.xlsx)|*.xlsx",
+                Title = "Создать новый файл Excel",
+                FileName = "CAN_Data_" + DateTime.Now.ToString("yyyyMMdd_HHmmss") + ".xlsx"
+            };
+
+            if (saveFileDialog.ShowDialog() == true)
+            {
+                _currentExcelFilePath = saveFileDialog.FileName;
+
+                // Создаем новый файл
+                using (var workbook = new XLWorkbook())
+                {
+                    workbook.AddWorksheet("CAN Data");
+                    workbook.SaveAs(_currentExcelFilePath);
+                }
+
+                UpdateSelectedFileDisplay();
+                StatusTextBlock.Text = $"Создан новый файл: {Path.GetFileName(_currentExcelFilePath)}";
+                MessageBox.Show("Новый файл создан: " + _currentExcelFilePath);
+            }
+        }
+
+        private void LoadConfigDataFromExcel(string filePath)
+        {
+            try
+            {
+                using (var workbook = new XLWorkbook(filePath))
+                {
+                    var worksheet = workbook.Worksheet(1);
+                    _configItems = new List<ConfigItem>();
+
+                    var rows = worksheet.RowsUsed().Skip(1);
+
+                    foreach (var row in rows)
+                    {
+                        var item = new ConfigItem
+                        {
+                            Name = row.Cell(1).GetString(),
+                            Id = row.Cell(2).GetString(),
+                            Multiplier = row.Cell(3).GetString(),
+                            Divider = row.Cell(4).GetString(),
+                            Indent = row.Cell(5).GetString(),
+                            Byte0 = row.Cell(6).GetString(),
+                            Byte1 = row.Cell(7).GetString(),
+                            Byte2 = row.Cell(8).GetString(),
+                            Byte3 = row.Cell(9).GetString(),
+                            Byte4 = row.Cell(10).GetString(),
+                            Byte5 = row.Cell(11).GetString(),
+                            Byte6 = row.Cell(12).GetString(),
+                            Byte7 = row.Cell(13).GetString()
+                        };
+                        _configItems.Add(item);
+                    }
+                }
+
+                configDataGrid.ItemsSource = _configItems;
+                ConfigComboBox.ItemsSource = _configItems;
+                StatusTextBlock.Text = $"Загружено {_configItems.Count} конфигураций";
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка загрузки данных из Excel: {ex.Message}");
+            }
+        }
+
+        public class ConfigItem
+        {
+            public string Name { get; set; }
+            public string Id { get; set; }
+            public string Multiplier { get; set; }
+            public string Divider { get; set; }
+            public string Indent { get; set; }
+            public string Byte0 { get; set; }
+            public string Byte1 { get; set; }
+            public string Byte2 { get; set; }
+            public string Byte3 { get; set; }
+            public string Byte4 { get; set; }
+            public string Byte5 { get; set; }
+            public string Byte6 { get; set; }
+            public string Byte7 { get; set; }
+        }
     }
 }

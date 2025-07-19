@@ -10,8 +10,11 @@
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="5">
-            <Button x:Name="ExportButton" Content="Экспорт в TXT" Click="ExportButton_Click" Margin="5" Padding="10,5"/>
+            <Button x:Name="ExportButton" Content="Экспорт в Excel" Click="ExportButton_Click" Margin="5" Padding="10,5"/>
             <ComboBox x:Name="ConfigComboBox" Width="200" Margin="5" DisplayMemberPath="Name"/>
+            <Button Name="CreateNewFileButton" Content="Создать новый файл" Click="CreateNewFileButton_Click" Margin="5" Padding="10,5"/>
+            <Button Name="SelectExcelFileButton" Content="Выбрать файл" Click="SelectExcelFileButton_Click" Margin="5" Padding="10,5"/>
+            <TextBlock Name="SelectedFileTextBlock" Margin="5" FontSize="14" VerticalAlignment="Center"/>
         </StackPanel>
 
         <DataGrid x:Name="configDataGrid" Grid.Row="1" AutoGenerateColumns="False" Margin="10">
@@ -39,3 +42,4 @@
         </StatusBar>
     </Grid>
 </Window>
+
