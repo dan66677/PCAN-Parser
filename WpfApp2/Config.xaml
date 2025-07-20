@@ -27,27 +27,26 @@
         <!-- Список параметров слева -->
         <Border Grid.Row="1" Grid.Column="0" Margin="5" BorderBrush="Gray" BorderThickness="1">
             <StackPanel>
-                <ListBox x:Name="ParameterList" SelectionMode="Single" 
-                         SelectionChanged="ParameterList_SelectionChanged"
-                         ScrollViewer.VerticalScrollBarVisibility="Auto"
-                         HorizontalContentAlignment="Stretch">
+                <ListBox x:Name="ParameterList" 
+                     SelectionMode="Single" 
+                     SelectionChanged="ParameterList_SelectionChanged"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     HorizontalContentAlignment="Stretch">  
                     <ListBox.ItemTemplate>
-                        <DataTemplate>
-                            <Border Padding="2">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                    </Grid.ColumnDefinitions>
-                                    <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
-                                    <Button Grid.Column="1" Content="×" Width="20" Margin="5,0,0,0" 
-                                            Click="DeleteItemButton_Click" Tag="{Binding}"
-                                            ToolTip="Удалить параметр"/>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ListBox.ItemTemplate>
-                </ListBox>
+                                <DataTemplate>
+                                    <Grid HorizontalAlignment="Stretch">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding}" VerticalAlignment="Center"/>
+                                        <Button Grid.Column="1" Content="×" Width="20" Margin="5,0,0,0" 
+                                Click="DeleteItemButton_Click" Tag="{Binding}"
+                                ToolTip="Удалить параметр"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,5">
                     <Button x:Name="AddParamButton" Content="Добавить" Width="100" 
@@ -77,19 +76,19 @@
 
                 <!-- Основные параметры -->
                 <TextBlock Grid.Row="0" Grid.Column="0" Text="Имя параметра:" Margin="0,5"/>
-                <TextBox x:Name="NameEntry" Grid.Row="0" Grid.Column="1" Margin="5"/>
+                <TextBox x:Name="NameEntry" Grid.Row="0" Grid.Column="1" Margin="5" LostFocus="TextBox_LostFocus"/>
 
                 <TextBlock Grid.Row="1" Grid.Column="0" Text="ID параметра:" Margin="0,5"/>
-                <TextBox x:Name="IdEntry" Grid.Row="1" Grid.Column="1" Margin="5"/>
+                    <TextBox x:Name="IdEntry" Grid.Row="1" Grid.Column="1" Margin="5" LostFocus="TextBox_LostFocus"/>
 
                 <TextBlock Grid.Row="2" Grid.Column="0" Text="Отступ:" Margin="0,5"/>
-                <TextBox x:Name="Indent" Grid.Row="2" Grid.Column="1" Margin="5"/>
+                        <TextBox x:Name="Indent" Grid.Row="2" Grid.Column="1" Margin="5" LostFocus="TextBox_LostFocus"/>
 
                 <TextBlock Grid.Row="3" Grid.Column="0" Text="Множитель:" Margin="0,5"/>
-                <TextBox x:Name="Multiplier" Grid.Row="3" Grid.Column="1" Margin="5"/>
+                            <TextBox x:Name="Multiplier" Grid.Row="3" Grid.Column="1" Margin="5" LostFocus="TextBox_LostFocus"/>
 
                 <TextBlock Grid.Row="4" Grid.Column="0" Text="Делитель:" Margin="0,5"/>
-                <TextBox x:Name="Divider" Grid.Row="4" Grid.Column="1" Margin="5"/>
+                <TextBox x:Name="Divider" Grid.Row="4" Grid.Column="1" Margin="5" LostFocus="TextBox_LostFocus"/>
 
                 <!-- Байты данных -->
                 <TextBlock Grid.Row="5" Grid.ColumnSpan="2" Text="Байты данных:" 
@@ -171,7 +170,8 @@
                     <!-- Байт 1 -->
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Байт 1:"/>
                     <TextBox x:Name="Byte1Value" Grid.Row="1" Grid.Column="1" Text="00" 
-                             TextChanged="ByteValue_TextChanged" Tag="Byte1"/>
+                             TextChanged="ByteValue_TextChanged" Tag="Byte1" PreviewTextInput="HexTextBox_PreviewTextInput"
+         GotFocus="TextBox_GotFocus"/>
                     <CheckBox Grid.Row="1" Grid.Column="2" Tag="Byte1Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="1" Grid.Column="3" Tag="Byte1Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="1" Grid.Column="4" Tag="Byte1Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
@@ -184,7 +184,8 @@
                     <!-- Байт 2 -->
                     <TextBlock Grid.Row="2" Grid.Column="0" Text="Байт 2:"/>
                     <TextBox x:Name="Byte2Value" Grid.Row="2" Grid.Column="1" Text="00" 
-                             TextChanged="ByteValue_TextChanged" Tag="Byte2"/>
+                             TextChanged="ByteValue_TextChanged" Tag="Byte2" PreviewTextInput="HexTextBox_PreviewTextInput"
+         GotFocus="TextBox_GotFocus"/>
                     <CheckBox Grid.Row="2" Grid.Column="2" Tag="Byte2Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="2" Grid.Column="3" Tag="Byte2Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="2" Grid.Column="4" Tag="Byte2Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
@@ -197,7 +198,8 @@
                     <!-- Байт 3 -->
                     <TextBlock Grid.Row="3" Grid.Column="0" Text="Байт 3:"/>
                     <TextBox x:Name="Byte3Value" Grid.Row="3" Grid.Column="1" Text="00" 
-                             TextChanged="ByteValue_TextChanged" Tag="Byte3"/>
+                             TextChanged="ByteValue_TextChanged" Tag="Byte3" PreviewTextInput="HexTextBox_PreviewTextInput"
+         GotFocus="TextBox_GotFocus"/>
                     <CheckBox Grid.Row="3" Grid.Column="2" Tag="Byte3Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="3" Grid.Column="3" Tag="Byte3Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="3" Grid.Column="4" Tag="Byte3Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
@@ -210,7 +212,8 @@
                     <!-- Байт 4 -->
                     <TextBlock Grid.Row="4" Grid.Column="0" Text="Байт 4:"/>
                     <TextBox x:Name="Byte4Value" Grid.Row="4" Grid.Column="1" Text="00" 
-                             TextChanged="ByteValue_TextChanged" Tag="Byte4"/>
+                             TextChanged="ByteValue_TextChanged" Tag="Byte4" PreviewTextInput="HexTextBox_PreviewTextInput"
+         GotFocus="TextBox_GotFocus"/>
                     <CheckBox Grid.Row="4" Grid.Column="2" Tag="Byte4Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="4" Grid.Column="3" Tag="Byte4Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="4" Grid.Column="4" Tag="Byte4Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
@@ -223,7 +226,8 @@
                     <!-- Байт 5 -->
                     <TextBlock Grid.Row="5" Grid.Column="0" Text="Байт 5:"/>
                     <TextBox x:Name="Byte5Value" Grid.Row="5" Grid.Column="1" Text="00" 
-                             TextChanged="ByteValue_TextChanged" Tag="Byte5"/>
+                             TextChanged="ByteValue_TextChanged" Tag="Byte5" PreviewTextInput="HexTextBox_PreviewTextInput"
+         GotFocus="TextBox_GotFocus"/>
                     <CheckBox Grid.Row="5" Grid.Column="2" Tag="Byte5Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="5" Grid.Column="3" Tag="Byte5Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="5" Grid.Column="4" Tag="Byte5Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
@@ -236,7 +240,8 @@
                     <!-- Байт 6 -->
                     <TextBlock Grid.Row="6" Grid.Column="0" Text="Байт 6:"/>
                     <TextBox x:Name="Byte6Value" Grid.Row="6" Grid.Column="1" Text="00" 
-                             TextChanged="ByteValue_TextChanged" Tag="Byte6"/>
+                             TextChanged="ByteValue_TextChanged" Tag="Byte6" PreviewTextInput="HexTextBox_PreviewTextInput"
+         GotFocus="TextBox_GotFocus"/>
                     <CheckBox Grid.Row="6" Grid.Column="2" Tag="Byte6Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="6" Grid.Column="3" Tag="Byte6Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="6" Grid.Column="4" Tag="Byte6Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
@@ -249,7 +254,8 @@
                     <!-- Байт 7 -->
                     <TextBlock Grid.Row="7" Grid.Column="0" Text="Байт 7:"/>
                     <TextBox x:Name="Byte7Value" Grid.Row="7" Grid.Column="1" Text="00" 
-                             TextChanged="ByteValue_TextChanged" Tag="Byte7"/>
+                             TextChanged="ByteValue_TextChanged" Tag="Byte7" PreviewTextInput="HexTextBox_PreviewTextInput"
+         GotFocus="TextBox_GotFocus"/>
                     <CheckBox Grid.Row="7" Grid.Column="2" Tag="Byte7Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="7" Grid.Column="3" Tag="Byte7Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="7" Grid.Column="4" Tag="Byte7Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
@@ -262,7 +268,8 @@
                     <!-- Байт 8 -->
                     <TextBlock Grid.Row="8" Grid.Column="0" Text="Байт 8:"/>
                     <TextBox x:Name="Byte8Value" Grid.Row="8" Grid.Column="1" Text="00" 
-                             TextChanged="ByteValue_TextChanged" Tag="Byte8"/>
+                             TextChanged="ByteValue_TextChanged" Tag="Byte8" PreviewTextInput="HexTextBox_PreviewTextInput"
+         GotFocus="TextBox_GotFocus"/>
                     <CheckBox Grid.Row="8" Grid.Column="2" Tag="Byte8Bit7" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="8" Grid.Column="3" Tag="Byte8Bit6" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
                     <CheckBox Grid.Row="8" Grid.Column="4" Tag="Byte8Bit5" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
@@ -290,4 +297,32 @@
             </StatusBarItem>
         </StatusBar>
     </Grid>
+
+
+    <Window.Resources>
+        <Style TargetType="ListBoxItem">
+            <Setter Property="Padding" Value="5"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                        <Border Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="{Binding HorizontalContentAlignment, 
+                            RelativeSource={RelativeSource AncestorType=ListBox}}"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+
 </Window>
